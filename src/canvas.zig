@@ -6,11 +6,9 @@ const ArrayList = std.ArrayList;
 const tuples = @import("./tuples.zig");
 const Color = tuples.Color;
 
-
-
 pub const Canvas = struct {
     width: u32,
-    height: u32,  
+    height: u32,
     items: []Color,
     allocator: Allocator,
 
@@ -49,13 +47,12 @@ pub const Canvas = struct {
         const writer = buffer.writer();
 
         // header
-        try writer.print("P3\n{} {}\n255\n", .{self.width, self.height});
-
+        try writer.print("P3\n{} {}\n255\n", .{ self.width, self.height });
 
         // write pixel data
         var i: u32 = 0;
         var indent: usize = 0;
-        while (i < self.items.len): (i += 1) {
+        while (i < self.items.len) : (i += 1) {
             // each pixel is represented as three integers: red, green, and blue.
             const color = self.items[i];
             const redComponent = clamp(color.red);
@@ -89,7 +86,7 @@ pub const Canvas = struct {
 
             const blueComponent = clamp(color.blue);
             const blueLen = len(blueComponent);
-             if (indent + 1 + blueLen >= 70) {
+            if (indent + 1 + blueLen >= 70) {
                 try writer.writeByte('\n');
                 indent = 0;
             } else {
@@ -115,7 +112,7 @@ pub fn make(allocator: Allocator, width: u32, height: u32) !Canvas {
     var i: u32 = 0;
 
     while (i < width * height) : (i += 1) {
-        slice[i] = Color{.red = 0.0, .green = 0.0, .blue = 0.0};
+        slice[i] = Color{ .red = 0.0, .green = 0.0, .blue = 0.0 };
     }
 
     return Canvas{
@@ -138,10 +135,7 @@ test "creating a canvas initializes everything with Color(0, 0, 0)" {
 
     while (y < canvas.height) : (y += 1) {
         while (x < canvas.width) : (x += 1) {
-            try expectEqual(
-                canvas.getPixel(x, y),
-                Color{.red = 0.0, .green = 0.0, .blue = 0.0}
-            );
+            try expectEqual(canvas.getPixel(x, y), Color{ .red = 0.0, .green = 0.0, .blue = 0.0 });
         }
         x = 0;
     }
@@ -156,24 +150,21 @@ test "creating a canvas" {
 
     while (y < canvas.height) : (y += 1) {
         while (x < canvas.width) : (x += 1) {
-            canvas.writePixel(x, y, Color{.red = 50, .green = 50, .blue =  50});
+            canvas.writePixel(x, y, Color{ .red = 50, .green = 50, .blue = 50 });
         }
         x = 0;
     }
 
     try expectEqual(canvas.width, 10);
     try expectEqual(canvas.height, 2);
-    try expectEqual(canvas.getPixel(7, 1).equals(Color{.red = 50, .green = 50, .blue = 50}), true);
+    try expectEqual(canvas.getPixel(7, 1).equals(Color{ .red = 50, .green = 50, .blue = 50 }), true);
 
     y = 0;
     x = 0;
 
     while (y < canvas.height) : (y += 1) {
         while (x < canvas.width) : (x += 1) {
-            try expectEqual(
-                canvas.getPixel(x, y),
-                Color{.red = 50, .green = 50, .blue =  50}
-            );
+            try expectEqual(canvas.getPixel(x, y), Color{ .red = 50, .green = 50, .blue = 50 });
         }
         x = 0;
     }
@@ -222,12 +213,12 @@ test "Splitting long lines in PPM files" {
     const canvas = try make(std.testing.allocator, 10, 2);
     defer std.testing.allocator.free(canvas.items);
 
-    const c = Color{.red = 1.0, .green = 0.8, .blue = 0.6};
+    const c = Color{ .red = 1.0, .green = 0.8, .blue = 0.6 };
 
     var y: u32 = 0;
     var x: u32 = 0;
 
-     while (y < canvas.height) : (y += 1) {
+    while (y < canvas.height) : (y += 1) {
         while (x < canvas.width) : (x += 1) {
             canvas.writePixel(x, y, c);
         }
@@ -244,9 +235,9 @@ test "Splitting long lines in PPM files" {
     try expect(std.mem.eql(u8, it.next().?, "255"));
 
     try expect(std.mem.eql(u8, it.next().?, "255 204 153 255 204 153 255 204 153 255 204 153 255 204 153 255 204"));
-    try expect(std.mem.eql(u8, it.next().? , "153 255 204 153 255 204 153 255 204 153 255 204 153 255 204 153 255"));
-    try expect(std.mem.eql(u8, it.next().? , "204 153 255 204 153 255 204 153 255 204 153 255 204 153 255 204 153"));
-    try expect(std.mem.eql(u8, it.next().? , "255 204 153 255 204 153 255 204 153"));
+    try expect(std.mem.eql(u8, it.next().?, "153 255 204 153 255 204 153 255 204 153 255 204 153 255 204 153 255"));
+    try expect(std.mem.eql(u8, it.next().?, "204 153 255 204 153 255 204 153 255 204 153 255 204 153 255 204 153"));
+    try expect(std.mem.eql(u8, it.next().?, "255 204 153 255 204 153 255 204 153"));
 }
 
 test "PPM files are terminated by a newline character" {
@@ -258,4 +249,3 @@ test "PPM files are terminated by a newline character" {
 
     try expectEqual(ppm[ppm.len - 1], '\n');
 }
-

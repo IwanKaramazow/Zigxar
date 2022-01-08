@@ -24,7 +24,6 @@ const canvas = @import("./canvas.zig");
 //     return Env{.pos = position, .velocity = velocity};
 // }
 
-
 pub fn main() !void {
     var arena = std.heap.ArenaAllocator.init(std.heap.page_allocator);
     defer arena.deinit();
@@ -36,11 +35,10 @@ pub fn main() !void {
 
     var i: u32 = 0;
 
-    while (i < 400): (i += 1) {
-        c.writePixel(i, 20, .{.red = 1.0, .green = 0.0, .blue = 0.0});
+    while (i < 400) : (i += 1) {
+        c.writePixel(i, 20, .{ .red = 1.0, .green = 0.0, .blue = 0.0 });
         i += 1;
     }
-
 
     // const start = tuples.point(0.0, 1.0, 0.0);
     // const velocity = tuples.vector(1.0, 1.8, 0.0).normalize() * 11.25;
@@ -49,13 +47,9 @@ pub fn main() !void {
     // const gravity = tuples.vector(0.0, -0.1, 0.0);
     // const wind = tuples.vector(-0.01, 0.0, 0.0);
     // const env = Env{.gravity = gravity, .wind = wind};
-    
 
-
-
-    const file = try std.fs.cwd().createFile("painting.ppm", .{.read = true});
+    const file = try std.fs.cwd().createFile("painting.ppm", .{ .read = true });
     defer file.close();
-
 
     const painting = try c.toPpm();
     defer allocator.free(painting);
